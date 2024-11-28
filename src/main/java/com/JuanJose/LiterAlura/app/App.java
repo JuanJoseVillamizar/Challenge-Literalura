@@ -1,68 +1,90 @@
 package com.JuanJose.LiterAlura.app;
 
-import com.JuanJose.LiterAlura.model.Book;
-import com.JuanJose.LiterAlura.model.BookData;
+
 import com.JuanJose.LiterAlura.repository.BookRepository;
 import com.JuanJose.LiterAlura.service.BookService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.JuanJose.LiterAlura.util.TextUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 @Component
 public class App {
-    private final BookService boookService;
+    private final BookService bookService;
     private final BookRepository repository;
     private static final Scanner SCANNER = new Scanner(System.in);
-    private static final String BASE_URL = "https://gutendex.com/books/";
 
-    public App(BookRepository repository, BookService boookService) {
+    public App(BookRepository repository, BookService bookService) {
         this.repository = repository;
-        this.boookService = boookService;
+        this.bookService = bookService;
     }
 
-    public void showMenu() throws IOException {
+    public void showMenu() {
         var menu = """
-                    1 - Buscar libro por titulo
-                    2 - Listar libros registrados
-                    3 - Listar autores registrados
-                    4 - Listar autores vivos en un determinado año
-                    5 - Listar libros por idioma
-                    
-                    0 - Salir
-                    """;
+                ================= LiterAlura ===============================
+                1 - Find book by title
+                2 - List registered books
+                3 - List registered authors
+                4 - List living authors for a given given year
+                5 - List books by language
+               
+                0 - Exit
+                ============================================================
+                """;
         while (true) {
             System.out.println(menu);
-            int option = SCANNER.nextInt();
-            SCANNER.nextLine();
-            switch (option) {
-                case 1:
-                    System.out.println("Please enter the name of the book:");
-                    String bookName = SCANNER.nextLine();
-                    boookService.getDataBook(bookName);
-                    break;
-                case 2:
-
-                    break;
-                case 3:
-
-                    break;
-                case 4:
-
-                    break;
-                case 5:
-
-                    break;
-
-                case 0:
-                    System.out.println("Cerrando la aplicación...");
-                    return;
-                default:
-                    System.out.println("Opción inválida");
+            System.out.println("Enter your choice: ");
+            try {
+                int option = Integer.parseInt(SCANNER.nextLine());
+                handleMenuOption(option);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
             }
         }
     }
+
+    private void handleMenuOption(int option) {
+            switch (option) {
+                case 1 -> findBookByTitle();
+                case 2 -> listRegisteredBooks();
+                case 3 -> listRegisteredAuthors();
+                case 4 -> listLivingAuthorsByYear();
+                case 5 -> listBooksByLanguage();
+                case 0 -> {
+                    System.out.println("Closing the application...");
+                    return;
+                }
+            }
+    }
+    private void findBookByTitle() {
+        System.out.println("Please enter the title of the book");
+        String bookName = SCANNER.nextLine();
+        TextUtils.validateText(bookName);
+        try{
+            bookService.searchWebBook(bookName);
+        } catch (IOException e) {
+            System.out.println("An error occurred while fetching the book: " + e.getMessage());
+        }
+    }
+    private void listRegisteredBooks() {
+        // Implementación temporal
+        System.out.println("Feature not implemented yet.");
+    }
+
+    private void listRegisteredAuthors() {
+        // Implementación temporal
+        System.out.println("Feature not implemented yet.");
+    }
+
+    private void listLivingAuthorsByYear() {
+        // Implementación temporal
+        System.out.println("Feature not implemented yet.");
+    }
+
+    private void listBooksByLanguage() {
+        // Implementación temporal
+        System.out.println("Feature not implemented yet.");
+    }
 }
+
