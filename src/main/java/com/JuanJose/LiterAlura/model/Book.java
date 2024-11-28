@@ -1,10 +1,11 @@
 package com.JuanJose.LiterAlura.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.JuanJose.LiterAlura.dto.BookDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
@@ -27,13 +28,13 @@ public class Book {
     public Book() {
     }
 
-    public Book(String title, List<Author> authors, List<String> bookShelves, List<String> languages, Boolean copyright, int download_count) {
-        this.title = title;
-        this.authors = authors;
-        this.bookShelves = bookShelves;
-        this.languages = languages;
-        this.copyright = copyright;
-        this.download_count = download_count;
+    public Book(BookDTO bookDTO) {
+        this.title = bookDTO.title();
+        this.authors = bookDTO.authors();
+        this.bookShelves = bookDTO.bookShelves();
+        this.languages = bookDTO.languages();
+        this.copyright = bookDTO.copyright();
+        this.download_count = bookDTO.download_count();
     }
 
     //Getters & Setters
@@ -96,13 +97,11 @@ public class Book {
     // To String
     @Override
     public String toString() {
-        return "Book{" +
-                "title='" + title + '\'' +
-                ", authors=" + (authors != null ? authors.stream().map(Author::getName).toList() : "[]") +
-                ", bookShelves=" + bookShelves +
-                ", languages=" + languages +
-                ", copyright=" + copyright +
-                ", download_count=" + download_count +
-                '}';
+        return "---------Book------------------------- \n" +
+                "Title: " + title + "\n" +
+                "Authors: " + (authors != null ? authors.stream().map(Author::getName).collect(Collectors.joining("; ")) : "No authors") + "\n" +
+                "Languages: " + (languages != null ? String.join(", ", languages) : "No languages") + "\n" +
+                "Download Count: " + download_count+ "\n" +
+                "-------------------------------------";
     }
 }
