@@ -1,5 +1,6 @@
 package com.JuanJose.LiterAlura.model;
 
+import com.JuanJose.LiterAlura.dto.BookDTO;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -10,6 +11,6 @@ public record BookData(
         int count,
         String next,
         String previous,
-        @JsonAlias("results") List<Book> books
+        @JsonAlias("results") List<BookDTO> books
 ) {
 }
