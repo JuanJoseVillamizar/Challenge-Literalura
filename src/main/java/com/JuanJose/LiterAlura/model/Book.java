@@ -12,10 +12,9 @@ import java.util.List;
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
     private String title;
-    @ManyToMany(mappedBy = "books",cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "books", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     private List<Author> authors;
     private List<String> bookShelves;
     private List<String> languages;
@@ -24,7 +23,9 @@ public class Book {
     @Version
     private Long version;
 
-    public Book(){}
+    //Constructors
+    public Book() {
+    }
 
     public Book(String title, List<Author> authors, List<String> bookShelves, List<String> languages, Boolean copyright, int download_count) {
         this.title = title;
@@ -35,6 +36,7 @@ public class Book {
         this.download_count = download_count;
     }
 
+    //Getters & Setters
     public Long getId() {
         return id;
     }
@@ -91,11 +93,12 @@ public class Book {
         this.download_count = download_count;
     }
 
+    // To String
     @Override
     public String toString() {
         return "Book{" +
                 "title='" + title + '\'' +
-                ", authors=" + (authors != null ? authors.stream().map(Author::getName).toList() : "[]")+
+                ", authors=" + (authors != null ? authors.stream().map(Author::getName).toList() : "[]") +
                 ", bookShelves=" + bookShelves +
                 ", languages=" + languages +
                 ", copyright=" + copyright +
