@@ -1,5 +1,6 @@
 package com.JuanJose.LiterAlura.client;
 
+import com.JuanJose.LiterAlura.exception.ApiRequestException;
 import com.JuanJose.LiterAlura.util.UrlUtils;
 import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.ServerErrorException;
@@ -32,9 +33,9 @@ public class ExternalApiClient {
             return response.body();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); // Restore the interrupted status of the thread
-            throw new IOException("Request was interrupted: " + e.getMessage(), e);
+            throw new ApiRequestException("Request was interrupted: " + e.getMessage(), e);
         } catch (IOException e) {
-            throw new IOException("Failed to fetch data from API: " + e.getMessage(), e);
+            throw new ApiRequestException("Failed to fetch data from API: " + e.getMessage(), e);
         }
 
 
