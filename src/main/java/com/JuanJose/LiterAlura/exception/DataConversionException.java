@@ -1,4 +1,4 @@
-package com.JuanJose.LiterAlura.util;
+package com.JuanJose.LiterAlura.exception;
 
 public class DataConversionException extends RuntimeException {
     public DataConversionException(String message, Throwable cause) {
