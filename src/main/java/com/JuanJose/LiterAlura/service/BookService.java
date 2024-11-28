@@ -1,19 +1,21 @@
 package com.JuanJose.LiterAlura.service;
 
 import com.JuanJose.LiterAlura.client.ExternalApiClient;
+import com.JuanJose.LiterAlura.dto.BookDTO;
+import com.JuanJose.LiterAlura.exception.ApiRequestException;
+import com.JuanJose.LiterAlura.exception.BookNotFoundException;
 import com.JuanJose.LiterAlura.model.Book;
 import com.JuanJose.LiterAlura.model.BookData;
 import com.JuanJose.LiterAlura.repository.BookRepository;
 import com.JuanJose.LiterAlura.util.JsonDataConverter;
+import com.JuanJose.LiterAlura.util.UrlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class BookService {
@@ -23,25 +25,31 @@ public class BookService {
     private static final JsonDataConverter jdc = new JsonDataConverter();
     private static final ExternalApiClient eac = new ExternalApiClient();
 
-    public Book getDataBook(String name) throws IOException {
-        if (repository == null) {
-            System.out.println("El repositorio es null.");
-        }
-        String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
+    public BookDTO getDataBook(String bookName) throws IOException {
+        String encodedName = URLEncoder.encode(bookName, StandardCharsets.UTF_8);
         String url = BASE_URL + "?search=" + encodedName;
-        System.out.println(url);
-        String response = eac.getDataFromApi(url);
-        BookData bookData = jdc.deserialize(response, BookData.class);
-        Optional<Book> book = bookData.books().stream().findFirst();
-        if (book.isPresent()) {
-            Book b = book.get();
-            System.out.println(b);
-            repository.save(b);
-            return b;
-        } else {
-            System.out.println("Not found book");
-            return null;
+        UrlUtils.validateUrl(url);
+        try {
+            String response = eac.getDataFromApi(url);
+            BookData bookData = jdc.deserialize(response, BookData.class);
+            return bookData.books().stream().findFirst()
+                    .orElseThrow(() -> new BookNotFoundException("Book not found: " + bookName));
+        } catch (IOException e) {
+            throw new ApiRequestException("Error fetching book data from API", e);
         }
+
+    }
+
+    public void searchWebBook(String BookName) throws IOException {
+        BookDTO data = getDataBook(BookName);
+        saveToDataBase(data);
+        System.out.println(data);
+    }
+
+    public void saveToDataBase(BookDTO bookDTO) {
+        Book book = new Book(bookDTO);
+        repository.save(book);
+        System.out.println("Book save in database");
     }
 
 }
