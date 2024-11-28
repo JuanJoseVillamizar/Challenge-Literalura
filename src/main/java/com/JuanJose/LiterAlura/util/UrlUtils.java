@@ -1,4 +1,4 @@
-package com.JuanJose.LiterAlura.utils;
+package com.JuanJose.LiterAlura.util;
 
 import java.net.URI;
 import java.net.URISyntaxException;

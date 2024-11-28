@@ -1,27 +1,32 @@
 package com.JuanJose.LiterAlura.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
-@Table(name = "books")
+@Table(name = "books", uniqueConstraints = @UniqueConstraint(columnNames = "title"))
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Long id;
     private String title;
-    @ManyToMany(mappedBy = "books", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private List<Person> authors;
+    @ManyToMany(mappedBy = "books",cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.EAGER)
+    private List<Author> authors;
     private List<String> bookShelves;
     private List<String> languages;
     private Boolean copyright;
     private int download_count;
+    @Version
+    private Long version;
 
     public Book(){}
 
-    public Book(String title, List<Person> authors, List<String> bookShelves,
-                List<String> languages, Boolean copyright, int download_count) {
+    public Book(String title, List<Author> authors, List<String> bookShelves, List<String> languages, Boolean copyright, int download_count) {
         this.title = title;
         this.authors = authors;
         this.bookShelves = bookShelves;
@@ -46,11 +51,11 @@ public class Book {
         this.title = title;
     }
 
-    public List<Person> getAuthors() {
+    public List<Author> getAuthors() {
         return authors;
     }
 
-    public void setAuthors(List<Person> authors) {
+    public void setAuthors(List<Author> authors) {
         this.authors = authors;
     }
 
@@ -90,7 +95,7 @@ public class Book {
     public String toString() {
         return "Book{" +
                 "title='" + title + '\'' +
-                ", authors=" + authors +
+                ", authors=" + (authors != null ? authors.stream().map(Author::getName).toList() : "[]")+
                 ", bookShelves=" + bookShelves +
                 ", languages=" + languages +
                 ", copyright=" + copyright +

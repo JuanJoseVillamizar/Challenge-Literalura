@@ -1,4 +1,4 @@
-package com.JuanJose.LiterAlura.utils;
+package com.JuanJose.LiterAlura.util;
 
 public class JsonUtils {
     private JsonUtils(){}

@@ -1,4 +1,4 @@
-package com.JuanJose.LiterAlura.utils;
+package com.JuanJose.LiterAlura.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
