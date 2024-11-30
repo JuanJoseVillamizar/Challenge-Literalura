@@ -30,7 +30,14 @@ public class Book {
 
     public Book(BookDTO bookDTO) {
         this.title = bookDTO.title();
-        this.authors = bookDTO.authors();
+        this.authors = bookDTO.authors().stream()
+                .map(authorDTO -> new Author(
+                        authorDTO.birth_year(),
+                        authorDTO.death_year(),
+                        authorDTO.name(),
+                        List.of(this)
+                ))
+                .collect(Collectors.toList());
         this.bookShelves = bookDTO.bookShelves();
         this.languages = bookDTO.languages();
         this.copyright = bookDTO.copyright();
@@ -102,6 +109,6 @@ public class Book {
                 "Authors: " + (authors != null ? authors.stream().map(Author::getName).collect(Collectors.joining("; ")) : "No authors") + "\n" +
                 "Languages: " + (languages != null ? String.join(", ", languages) : "No languages") + "\n" +
                 "Download Count: " + download_count+ "\n" +
-                "-------------------------------------";
+                "-------------------------------------"+ "\n";
     }
 }
