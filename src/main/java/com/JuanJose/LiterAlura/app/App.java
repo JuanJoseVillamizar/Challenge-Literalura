@@ -137,7 +137,7 @@ public class App {
         System.out.println("Please enter the name of the Author");
         String name = SCANNER.nextLine();
         TextUtils.validateText(name);
-        authorService.findAuthorByName(name);
+        authorService.findAuthorsByName(name);
     }
     private void findBooksByTitle(){
         System.out.println("Please enter the title of the book");
