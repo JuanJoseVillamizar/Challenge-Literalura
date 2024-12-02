@@ -7,19 +7,24 @@ import com.JuanJose.LiterAlura.repository.BookRepository;
 import com.JuanJose.LiterAlura.service.AuthorService;
 import com.JuanJose.LiterAlura.service.BookService;
 import com.JuanJose.LiterAlura.util.TextUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
 
 import java.util.List;
 import java.util.Scanner;
 
 @Component
 public class App {
+
+    private static final Logger logger = LoggerFactory.getLogger(App.class);
+    private static final Scanner SCANNER = new Scanner(System.in);
+
     private final BookService bookService;
     private final AuthorService authorService;
     private final AuthorRepository authorRepository;
     private final BookRepository bookRepository;
-    private static final Scanner SCANNER = new Scanner(System.in);
+
 
     public App(BookRepository bookRepository, BookService bookService, AuthorRepository authorRepository, AuthorService authorService) {
         this.bookRepository = bookRepository;
@@ -42,13 +47,15 @@ public class App {
                 0 - Exit
                 ============================================================
                 """;
-        boolean isRunning = true;
-        while (isRunning) {
+        while (true) {
             System.out.println(menu);
             System.out.println("Enter your choice: ");
             try {
                 int option = Integer.parseInt(SCANNER.nextLine());
-                isRunning = handleMenuOption(option);
+                if (!handleMenuOption(option)) {
+                    logger.info("Closing the application...");
+                    break;
+                }
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a valid number.");
             }
@@ -65,16 +72,14 @@ public class App {
                 case 6 -> findAuthorByName();
                 case 7 -> findBooksByTitle();
                 case 0 -> {
-                    System.out.println("Closing the application...");
                     return false;
                 }
-                default -> System.out.println("Invalid option. Please try again");
+                default -> logger.warn("Invalid option. Please try again.");
             }
         return true;
     }
     private void findBookByTitle() {
-        System.out.println("Please enter the title of the book:");
-        String bookName = SCANNER.nextLine();
+        String bookName = getStringInput("Please enter the title of the book:");
         TextUtils.validateText(bookName);
         bookService.searchAndSaveBook(bookName);
     }
@@ -82,9 +87,9 @@ public class App {
     private void listRegisteredBooks() {
         List<Book> books = bookService.findAllBooks();
         if (books.isEmpty()){
-            System.out.println("Not registered books found.");
+            logger.info("Not registered books found.");
         }else {
-            System.out.println(books);
+            logger.info("Books found: {}", books);
         }
 
     }
@@ -92,66 +97,67 @@ public class App {
     private void listRegisteredAuthors() {
         List<Author> authors = authorRepository.findAll();
         if (authors.isEmpty()) {
-            System.out.println("No authors are registered.");
+            logger.info("No authors are registered.");
         } else {
-            System.out.println(authors);
+            logger.info("Authors found: {}", authors);
         }
     }
 
     private void listLivingAuthorsByYear() {
-        System.out.println("Please enter the year");
-        int year = getIntInput();
+        int year = getIntInput("Please enter the year:");
         List<Author>authors = authorService.findLivingAuthorsByGivenYear(year);
         if (authors.isEmpty()){
-            System.out.println("No authors were alive in the year: " + year + ".");
+            logger.info("No authors were alive in the year: {}.", year);
         }else {
-            System.out.println(authors);
+            logger.info("Authors alive in the yerar {}: {}.", year, authors);
         }
 
     }
 
     private void listBooksByLanguage() {
-        System.out.println("""
-                Please select which language you want to search for books:
-                -en : English
-                -es : Spanish
-                -fr : French
-                -pt : Portuguese
+        String language = getStringInput("""
+                Please select the language:
+                - en : English
+                - es : Spanish
+                - fr : French
+                - pt : Portuguese
                 """);
-        System.out.println("Select one: ");
-        String language = SCANNER.nextLine();
         List<String> validLanguages= List.of("es", "en", "fr", "pt");
-        if (!validLanguages.contains(language)){
-            System.out.println("Invalid option");
+        if (!validLanguages.contains(language)) {
+            logger.error("Invalid language option. Please choose a valid language.");
             return;
         }
         List<Book> booksByLanguage = bookService.findByLanguage(language);
         if (booksByLanguage.isEmpty()){
-            System.out.println("No books for the select language.");
+            logger.info("No books found for the selected language.");
         }else {
-            System.out.println(booksByLanguage);
+            logger.info("Books found in {}: {}", language, booksByLanguage);
         }
     }
 
     private void findAuthorByName() {
-        System.out.println("Please enter the name of the Author");
-        String name = SCANNER.nextLine();
+        String name = getStringInput("Please enter the name of the Author:");
         TextUtils.validateText(name);
         authorService.findAuthorsByName(name);
     }
     private void findBooksByTitle(){
-        System.out.println("Please enter the title of the book");
-        String bookName = SCANNER.nextLine();
+        String bookName = getStringInput("Please enter the title of the book");
         TextUtils.validateText(bookName);
         bookService.findBookByName(bookName);
     }
 
-    private int getIntInput() {
+    private String getStringInput(String prompt) {
+        System.out.println(prompt);
+        return SCANNER.nextLine();
+    }
+
+    private int getIntInput(String prompt) {
         while (true) {
             try {
+                System.out.print(prompt);
                 return Integer.parseInt(SCANNER.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a valid number.");
+                logger.error("Invalid input. Please enter a valid number.");
             }
         }
     }
