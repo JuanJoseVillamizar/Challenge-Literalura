@@ -28,7 +28,7 @@ public class LiterAluraApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-	App app = new App(bookRepository,bookService,authorRepository,authorService);
+		App app = new App(bookRepository, bookService, authorRepository, authorService);
 	app.showMenu();
 	}
 }
