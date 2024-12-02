@@ -23,4 +23,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             "(SELECT 1 FROM  unnest(b.languages) as languages " +
             "WHERE languages ILIKE CONCAT('%', :language, '%'))", nativeQuery = true)
     List<Book> findBooksByLanguagesContainingIgnoreCase(String language);
+
+    // Find the top ten most downloaded books
+    @Query(value="SELECT b FROM Book b ORDER BY b.download_count DESC LIMIT 10")
+    List<Book>findTopTenBooksByDownloads();
 }

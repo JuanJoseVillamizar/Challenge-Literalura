@@ -42,7 +42,8 @@ public class App {
                 4 - List living authors for a given given year
                 5 - List books by language
                 6 - Find author by name
-                7 - Find saved books by title
+                7 - Find the top ten most download books
+                8 - Find saved books by title
                
                 0 - Exit
                 ============================================================
@@ -70,7 +71,8 @@ public class App {
                 case 4 -> listLivingAuthorsByYear();
                 case 5 -> listBooksByLanguage();
                 case 6 -> findAuthorByName();
-                case 7 -> findBooksByTitle();
+                case 7 -> findTopTenBooksByDownloads();
+                case 8 -> findBooksByTitle();
                 case 0 -> {
                     return false;
                 }
@@ -139,6 +141,14 @@ public class App {
         String name = getStringInput("Please enter the name of the Author:");
         TextUtils.validateText(name);
         authorService.findAuthorsByName(name);
+    }
+    private void findTopTenBooksByDownloads(){
+        List<Book> books = bookService.findTopTenBooksByDownloads();
+        if (books.isEmpty()){
+            logger.info("Not registered books found.");
+        }else {
+            logger.info("The top ten most download books: {}", books);
+        }
     }
     private void findBooksByTitle(){
         String bookName = getStringInput("Please enter the title of the book");

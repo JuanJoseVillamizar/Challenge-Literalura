@@ -87,6 +87,10 @@ public class BookService {
         return repository.findAll();
     }
 
+    public List<Book>findTopTenBooksByDownloads(){
+        return repository.findTopTenBooksByDownloads();
+    }
+
     public List<Book> findByLanguage(String language) {
         return repository.findBooksByLanguagesContainingIgnoreCase(language);
     }
