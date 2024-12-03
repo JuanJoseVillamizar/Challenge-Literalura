@@ -44,6 +44,8 @@ public class App {
                 6 - Find author by name
                 7 - Find the top ten most download books
                 8 - Find saved books by title
+                9 - show statistics authors
+                10 - show book statistics in database
                
                 0 - Exit
                 ============================================================
@@ -73,6 +75,8 @@ public class App {
                 case 6 -> findAuthorByName();
                 case 7 -> findTopTenBooksByDownloads();
                 case 8 -> findBooksByTitle();
+                case 9 -> statisticsAuthor();
+                case 10 -> staticsBooksInDatabase();
                 case 0 -> {
                     return false;
                 }
@@ -154,6 +158,16 @@ public class App {
         String bookName = getStringInput("Please enter the title of the book");
         TextUtils.validateText(bookName);
         bookService.findBookByName(bookName);
+    }
+
+    private void statisticsAuthor() {
+        String authorName = getStringInput("Please enter the name of the author");
+        TextUtils.validateText(authorName);
+        authorService.statisticsAuthors(authorName);
+    }
+
+    private void staticsBooksInDatabase() {
+        bookService.statisticsBooks();
     }
 
     private String getStringInput(String prompt) {

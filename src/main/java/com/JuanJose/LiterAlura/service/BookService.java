@@ -3,6 +3,7 @@ package com.JuanJose.LiterAlura.service;
 import com.JuanJose.LiterAlura.client.ExternalApiClient;
 import com.JuanJose.LiterAlura.dto.BookDTO;
 import com.JuanJose.LiterAlura.exception.ApiRequestException;
+import com.JuanJose.LiterAlura.model.Author;
 import com.JuanJose.LiterAlura.model.Book;
 import com.JuanJose.LiterAlura.model.BookData;
 import com.JuanJose.LiterAlura.repository.BookRepository;
@@ -16,8 +17,10 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -104,5 +107,16 @@ public class BookService {
 
         }
     }
+    public void statisticsBooks() {
+        List<Book> books = repository.findAll();
+        IntSummaryStatistics stats = books.stream()
+                .collect(Collectors.summarizingInt(Book::getDownload_count));
+        logger.info("Total books downloaded: {}", stats.getCount());
+        logger.info("Total downloads: {}", stats.getSum());
+        logger.info("Average downloads: {}", stats.getAverage());
+        logger.info("Min downloads: {}", stats.getMin());
+        logger.info("Max downloads: {}", stats.getMax());
+    }
+
 
 }

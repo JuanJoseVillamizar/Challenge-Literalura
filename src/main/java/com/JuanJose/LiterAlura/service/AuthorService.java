@@ -10,8 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthorService {
@@ -57,4 +59,20 @@ public class AuthorService {
     public List<Author> findLivingAuthorsByGivenYear(int year) {
         return authorRepository.findAuthorsAliveInYear(year);
     }
+
+    public void statisticsAuthors(String name) {
+        Optional<Author> author = authorRepository.findFirstAuthorByNameContainingIgnoreCase(name);
+        Optional<Author> authorFound = author.stream().findFirst();
+        if (authorFound.isPresent()){
+            Author authorFound1 = authorFound.stream().findFirst().get();
+            IntSummaryStatistics stats = authorFound1.getBooks().stream()
+                    .collect(Collectors.summarizingInt(Book::getDownload_count));
+            logger.info("Total books downloaded: {}", stats.getCount());
+            logger.info("Total downloads: {}", stats.getSum());
+            logger.info("Average downloads: {}", stats.getAverage());
+            logger.info("Min downloads: {}", stats.getMin());
+            logger.info("Max downloads: {}", stats.getMax());
+        }
+    }
+
 }

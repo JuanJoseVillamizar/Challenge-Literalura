@@ -13,6 +13,9 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
     //Find Author by name (case-insensitive)
     Optional<Author> findAuthorByNameContainingIgnoreCase(String name);
 
+    //Find first Author by name (case-insensitive)
+    Optional<Author> findFirstAuthorByNameContainingIgnoreCase(String name);
+
     // Find Authors by name fragment (case-insensitive)
     List<Author> findListAuthorsByNameContainingIgnoreCase(String name);
 
